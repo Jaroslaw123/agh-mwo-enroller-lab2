@@ -25,6 +25,25 @@ public class MeetingService {
 		return query.list();
 	}
 
+	public Collection<Meeting> getAll(String sortBy, String sortOrder, String id) {
+		if (id.equals("")) {
+			String hql = "FROM Meeting";
+			if (sortBy.equals("id")) {
+				hql = hql + " ORDER BY id ";
+				if (sortOrder.equals("ASC") || sortOrder.equals("DESC")) {
+					hql = hql + sortOrder;
+				}
+			}
+			Query query = this.session.createQuery(hql);
+			return query.list();
+		} else {
+
+			String hql = "FROM Meeting m WHERE m.id LIKE '%" + id + "%'";
+			Query query = this.session.createQuery(hql);
+			System.out.println(hql);
+			return query.list();
+		}
+	}
 	public Meeting findById(long id) {
 		return this.session.get(Meeting.class, id);
 	}
