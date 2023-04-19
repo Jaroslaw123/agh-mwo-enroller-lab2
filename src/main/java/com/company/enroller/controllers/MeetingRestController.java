@@ -6,10 +6,7 @@ import com.company.enroller.persistence.MeetingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
@@ -18,15 +15,23 @@ import java.util.Collection;
 public class MeetingRestController{
     @Autowired
     MeetingService meetingService;
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeetings(
+            @RequestParam(value = "sortBy", defaultValue = "")String sortBy,
+            @RequestParam(value = "sortOrder", defaultValue = "")String sortOrder,
+            @RequestParam(value = "key", defaultValue = "")String id
+    )
+    {
+        Collection<Meeting> meetings = meetingService.getAll(sortBy, sortOrder, id);
+        return new ResponseEntity<Collection<Meeting>>(meetings, HttpStatus.OK);
+    }
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public ResponseEntity<?> getMeeting(@PathVariable("id") Long id){
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(meeting,HttpStatus.OK);
+    }
 
-//    @RequestMapping(value = "", method = RequestMethod.GET)
-//    public ResponseEntity<?> getMeetings(
-//            @RequestParam(value = "sortBy", defaultValue = "")String sortBy,
-//            @RequestParam(value = "sortOrder", defaultValue = "")String sortOrder,
-//            @RequestParam(value = "key", defaultValue = "")String id
-//    )
-//    {
-//        Collection<Meeting> meetingServices = meetingService.getAll(sortBy, sortOrder, id);
-//        return new ResponseEntity<Collection<Participant>>(meetingServices, HttpStatus.OK);
-//    }
 }
