@@ -33,5 +33,44 @@ public class MeetingRestController{
         }
         return new ResponseEntity<>(meeting,HttpStatus.OK);
     }
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<?> addMeeting(@RequestBody Meeting meeting) {
+        if (meetingService.alreadyExist(meeting)) {
+            return new ResponseEntity<String>(
+                    " Cannot create Meeting, beacuse meeting with title:  "+ meeting.getTitle() +" and date:" +
+                            meeting.getDate() +"already exist",
+                    HttpStatus.CONFLICT);
+        }
+        meetingService.add(meeting);
+        return new ResponseEntity<Meeting>(meeting, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateMeeting(@PathVariable("id") Long id, @RequestBody Meeting updatedMeeting){
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null) {
+            return new ResponseEntity<String>(
+                    "Meeting with specified id: " +id + " does not exist"
+                    , HttpStatus.CONFLICT);
+        }
+        meeting.setDate(updatedMeeting.getDate());
+        meeting.setDescription(updatedMeeting.getDescription());
+        meeting.setTitle(updatedMeeting.getTitle());
+        meetingService.update(meeting);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteMeeting(@PathVariable("id") Long id){
+        Meeting meeting = meetingService.findById(id);
+        if (meeting == null) {
+            return new ResponseEntity<String>(
+                    "Meeting with specified id: " +id + " does not exist"
+                    , HttpStatus.CONFLICT);
+        }
+        meetingService.delete(meeting);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 }
