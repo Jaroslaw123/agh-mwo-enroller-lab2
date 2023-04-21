@@ -90,4 +90,6 @@ public class MeetingService {
 		return query.list().size() != 0;
 	}
 
+
+
 }
