@@ -68,8 +68,16 @@ public class Meeting {
 	}
 
 	public void removeParticipant(Participant participant) {
-		this.participants.remove(participant);
-	}
+			this.participants.remove(participant);
+		}
+		public boolean checkIfParticipantIsInMeeting(Participant participant){
+		if (this.participants.contains(participant)){
+			return true;
+		}
+		else {
+			return false;
+		}
+		}
 
 	public Collection<Participant> getParticipants() {
 		return participants;

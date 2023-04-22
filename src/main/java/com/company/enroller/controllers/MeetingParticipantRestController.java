@@ -47,6 +47,7 @@ public class MeetingParticipantRestController {
                     , HttpStatus.NOT_FOUND);
         }
         meeting.addParticipant(addedPparticipant);
+        meetingService.update(meeting);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -58,7 +59,21 @@ public class MeetingParticipantRestController {
                     "Unable to find meeting with specified id: " + id
                     , HttpStatus.NOT_FOUND);
         }
-        meeting.removeParticipant(deletedParticipant);
+        Participant participant = participantService.findByLogin(deletedParticipant.getLogin());
+        if (participant == null) {
+            return new ResponseEntity<String>(
+                    "Unable to find user with specified login: " + participant.getLogin()
+                    , HttpStatus.NOT_FOUND);
+        }
+        if(meeting.checkIfParticipantIsInMeeting(participant)){
+            meeting.removeParticipant(participant);
+        }
+        else {
+            return new ResponseEntity<String>(
+                    "The specified user is not signed in on this meeting"
+                    ,HttpStatus.NOT_FOUND);
+        }
+        meetingService.update(meeting);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
